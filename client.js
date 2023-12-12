@@ -9,46 +9,33 @@ const rl = readline.createInterface({
   terminal: false,
 });
 
-// Creating a Socket.IO connection to the server at "https://chat-app-socketio-inpt.onrender.com".
-const socket = io("https://chat-app-socketio-inpt.onrender.com");
+let username;
 
-// Sets up an event listener for the "connect" event in Socket.io
-socket.on("connect", () => {
-  console.log("Connected to Server!!!");
+rl.question("Enter your name : ", (name) => {
+  username = name;
 
-  let username;
+  // Connecting to the Server
+  const socket = io.connect("http://localhost:9090");
 
-  // Taking input as username
-  rl.question("Enter your Username: ", (line) => {
-    rl.on("line", () => {
-      username = line;
-      socket.emit("join", username);
-    });
-    //Read next line for new message
+  console.log(username);
+
+  if (username) {
     process.stdout.write("Me : ");
+
+    //Reading the input message
     rl.on("line", (msg) => {
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
-
-      // Send custom events from the client to the server - ("chat-msg")
       socket.emit("chat-msg", `${username}: ${msg}`);
-
       process.stdout.write("Me: ");
     });
-  });
-});
 
-//Recieve Broadcasted Message from the Server on custom event ("chat-msg")
-socket.on("join", (username) => {
-  console.log(username + " Joined");
-
-  socket.on("chat-msg", (msg) => {
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-
-    //Print the message on every clients terminal. (Broadcast Message)
-    console.log(msg);
-
-    process.stdout.write("Me: ");
-  });
+    //Broadcast the message comming from server on event "chat-msg"
+    socket.on("chat-msg", (msg) => {
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      console.log(msg);
+      process.stdout.write("Me: ");
+    });
+  }
 });
