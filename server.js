@@ -19,11 +19,10 @@ io.on("connection", (socket) => {
   // Recieve custom events from the client - ("chat-msg")
 
   socket.on("join", (username) => {
-    console.log(username + " Joined");
+    socket.emit("join", username);
 
     socket.on("chat-msg", (msg) => {
       //Print message on server's console
-      console.log("Message: " + msg);
 
       //Broadcast the Message to every client on custom event ("chat-msg")
       socket.broadcast.emit("chat-msg", msg);
