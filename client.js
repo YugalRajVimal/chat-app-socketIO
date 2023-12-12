@@ -10,7 +10,7 @@ const rl = readline.createInterface({
 });
 
 // Creating a Socket.IO connection to the server at "https://chat-app-socketio-inpt.onrender.com".
-const socket = io("https://socketio-chat-app-el5v.onrender.com");
+const socket = io("https://chat-app-socketio-inpt.onrender.com");
 
 // Sets up an event listener for the "connect" event in Socket.io
 socket.on("connect", () => {
@@ -39,12 +39,16 @@ socket.on("connect", () => {
 });
 
 //Recieve Broadcasted Message from the Server on custom event ("chat-msg")
-socket.on("chat-msg", (msg) => {
-  process.stdout.clearLine();
-  process.stdout.cursorTo(0);
+socket.on("join", (username) => {
+  console.log(username + " Joined");
 
-  //Print the message on every clients terminal. (Broadcast Message)
-  console.log(msg);
+  socket.on("chat-msg", (msg) => {
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
 
-  process.stdout.write("Me: ");
+    //Print the message on every clients terminal. (Broadcast Message)
+    console.log(msg);
+
+    process.stdout.write("Me: ");
+  });
 });
